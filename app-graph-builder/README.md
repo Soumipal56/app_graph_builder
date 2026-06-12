@@ -1,73 +1,39 @@
-# React + TypeScript + Vite
+# App Graph Builder
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A responsive "App Graph Builder" UI that visualizes service graphs using ReactFlow, TanStack Query, and Zustand.
 
-Currently, two official plugins are available:
+## 🚀 Setup Instructions
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. **Install Dependencies**
+   ```bash
+   npm install
+   ```
 
-## React Compiler
+2. **Start the Development Server**
+   ```bash
+   npm run dev
+   ```
+   *The MSW (Mock Service Worker) is automatically initialized in development mode to intercept API requests.*
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+3. **Build for Production**
+   ```bash
+   npm run build
+   ```
 
-## Expanding the ESLint configuration
+## 🏗️ Key Architecture Decisions
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **State Management (Zustand over Context):** Used a centralized Zustand store (`useAppStore`) for cross-component UI state (`selectedAppId`, `selectedNodeId`, `isMobilePanelOpen`). This completely eliminates prop-drilling between the Canvas, TopBar, and RightPanel.
+- **Data Fetching (TanStack Query + MSW):** Handled all server-state natively via TanStack Query (`useApps`, `useGraph`). MSW was used to mock the API endpoints (`/api/apps`) at the network layer, providing realistic simulated latency, error states, and loading skeletons without needing a real backend.
+- **ReactFlow Integration:** Lifted the `<ReactFlowProvider>` to the root `<App />` component. This allows child components (like the `NodeInspector`) to access and update graph data directly using `useReactFlow()` and `useNodesData()`, maintaining predictable and performant graph state outside of the immediate canvas.
+- **Routing:** Avoiding traditional React Router, the app leverages derived state in the main canvas for dynamic data loading, preventing URL-based SPA fallback collisions with the Mock Service Worker routes.
+- **Styling:** Utilized Tailwind CSS v4 paired with `shadcn/ui` components for rapid, consistent, and beautiful UI development.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## ⚠️ Known Limitations
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- **Mock Backend Only:** The app uses Mock Service Worker (MSW) to intercept and mock API calls. It does not communicate with a real backend. If you refresh the page heavily, Vite's cache and the MSW registration can sometimes race, requiring a hard refresh (`Ctrl + Shift + R`).
+- **In-Memory Graph State:** Any changes to the graph (node capacity slider, deleting nodes) are only stored in local ReactFlow state and are not persisted across application reloads or switching between apps.
+- **Static Canvas Coordinates:** The mock data provides hardcoded `x`/`y` positions for the nodes rather than implementing an auto-layout algorithm (like Dagre).
+- **Mobile Experience:** While the right panel drawer is fully responsive for mobile views, complex node-dragging and zooming on small touch devices inside ReactFlow can be cramped.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+*Built with React, Vite, TypeScript, ReactFlow, shadcn/ui, TanStack Query, and Zustand.*
