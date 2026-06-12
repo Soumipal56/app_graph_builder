@@ -14,8 +14,7 @@ const queryClient = new QueryClient({
 });
 
 async function enableMocking() {
-  // MSW only runs in development
-  if (import.meta.env.PROD) return;
+  // MSW runs in both development and production for this take-home assignment
   const { worker } = await import('./mocks/browser');
   return worker.start({ onUnhandledRequest: 'bypass' });
 }

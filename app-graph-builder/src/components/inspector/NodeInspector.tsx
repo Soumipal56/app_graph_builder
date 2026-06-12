@@ -1,4 +1,4 @@
-import { useReactFlow, useNodesData } from '@xyflow/react';
+import { useReactFlow, useNodesData, type Node } from '@xyflow/react';
 import { useAppStore } from '@/store/useAppStore';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { StatusPill } from './StatusPill';
@@ -9,7 +9,7 @@ export function NodeInspector() {
   const { selectedNodeId, activeInspectorTab, setActiveInspectorTab } = useAppStore();
   const { setNodes } = useReactFlow();
 
-  const nodeData = useNodesData<ServiceNodeData>(selectedNodeId || '');
+  const nodeData = useNodesData<Node<ServiceNodeData>>(selectedNodeId || '');
 
   if (!selectedNodeId || !nodeData) return null;
 

@@ -8,6 +8,7 @@ import {
   useEdgesState,
   useReactFlow,
   type Node,
+  type Edge,
   type NodeChange,
   type NodeMouseHandler,
   type NodeTypes,
@@ -29,13 +30,13 @@ export function AppCanvas() {
   const { fitView } = useReactFlow();
 
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
 
   // Sync graph data into ReactFlow state on load / app change
   useEffect(() => {
     if (data) {
-      setNodes(data.nodes as Node[]);
-      setEdges(data.edges);
+      setNodes((data.nodes as unknown) as Node[]);
+      setEdges((data.edges as unknown) as Edge[]);
       setTimeout(() => fitView({ padding: 0.25, duration: 600 }), 50);
     } else {
       setNodes([]);

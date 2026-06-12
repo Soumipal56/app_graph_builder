@@ -7,7 +7,7 @@ export interface App {
 
 export type NodeStatus = 'Healthy' | 'Degraded' | 'Down';
 
-export interface ServiceNodeData {
+export interface ServiceNodeData extends Record<string, unknown> {
   name: string;
   status: NodeStatus;
   capacity: number;
