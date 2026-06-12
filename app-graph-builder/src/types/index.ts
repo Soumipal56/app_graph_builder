@@ -7,10 +7,16 @@ export interface App {
 
 export type NodeStatus = 'Healthy' | 'Degraded' | 'Down';
 
-export interface ServiceNodeData extends Record<string, unknown> {
+export interface ServiceNodeData {
   name: string;
   status: NodeStatus;
   capacity: number;
+  cpu?: number;
+  memory?: number;
+  disk?: number;
+  region?: string;
+  costPerHour?: number;
+  cloudProvider?: 'aws' | 'gcp' | 'azure';
   description?: string;
 }
 

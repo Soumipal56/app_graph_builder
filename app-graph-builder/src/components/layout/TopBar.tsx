@@ -1,73 +1,47 @@
-import { Zap, Maximize2, AlertTriangle, Menu } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Moon, Sun, Share2, Menu } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
-import { useQueryClient } from '@tanstack/react-query';
+import { useTheme } from '@/context/ThemeContext';
 
 export function TopBar() {
-  const {
-    isMobilePanelOpen,
-    setIsMobilePanelOpen,
-    simulateError,
-    toggleSimulateError,
-    selectedAppId,
-  } = useAppStore();
-  const queryClient = useQueryClient();
-
-  const handleToggleError = () => {
-    toggleSimulateError();
-    // Immediately re-fetch current graph with new error state
-    if (selectedAppId) {
-      queryClient.invalidateQueries({ queryKey: ['graph', selectedAppId] });
-    }
-  };
+  const { isMobilePanelOpen, setIsMobilePanelOpen } = useAppStore();
+  const { theme, setTheme } = useTheme();
 
   return (
-    <header className="h-14 border-b bg-background flex items-center justify-between px-4 shrink-0 z-20">
-      {/* Brand */}
-      <div className="flex items-center gap-2.5">
-        <div className="p-1.5 rounded-md bg-primary/10">
-          <Zap className="h-5 w-5 text-primary" />
-        </div>
-        <span className="font-semibold text-base tracking-tight">App Graph Builder</span>
+    <header className="h-14 border-b border-gray-200 dark:border-white/10 bg-white dark:bg-[#0a0a0a] flex items-center justify-between px-4 shrink-0 transition-colors duration-200">
+      <div className="flex items-center gap-3">
+        {/* Intentionally left blank to make room for LeftRail logo alignment, 
+            or place breadcrumbs here if needed */}
       </div>
 
-      {/* Actions */}
       <div className="flex items-center gap-2">
-        <Button
-          id="toggle-error-btn"
-          variant={simulateError ? 'destructive' : 'outline'}
-          size="sm"
-          className="gap-1.5 hidden sm:flex"
-          onClick={handleToggleError}
-          title="Toggle simulated network error on graph API"
-        >
-          <AlertTriangle className="h-3.5 w-3.5" />
-          {simulateError ? 'Error ON' : 'Simulate Error'}
-        </Button>
-
-        <Button
-          id="fit-view-btn"
-          variant="outline"
-          size="sm"
-          className="gap-1.5 hidden sm:flex"
-          onClick={() => window.dispatchEvent(new CustomEvent('fit-view'))}
-          title="Fit graph to view (Shift+F)"
-        >
-          <Maximize2 className="h-3.5 w-3.5" />
-          Fit View
-        </Button>
-
-        {/* Mobile panel toggle */}
-        <Button
-          id="mobile-panel-btn"
-          variant="ghost"
-          size="icon"
-          className="md:hidden"
+        <button className="h-9 w-9 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 rounded-md transition-colors">
+          <Share2 className="h-4 w-4" />
+        </button>
+        <div className="flex items-center bg-black/10 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-lg p-0.5 ml-2">
+          <button 
+            onClick={() => setTheme('dark')}
+            className={`p-1.5 rounded-md transition-colors shadow-sm ${theme === 'dark' ? 'bg-white/10 text-white' : 'text-gray-500 hover:text-black'}`}
+          >
+            <Moon className="h-4 w-4" />
+          </button>
+          <button 
+            onClick={() => setTheme('light')}
+            className={`p-1.5 rounded-md transition-colors shadow-sm ${theme === 'light' ? 'bg-white text-black' : 'text-gray-500 hover:text-white'}`}
+          >
+            <Sun className="h-4 w-4" />
+          </button>
+        </div>
+        <button className="ml-2 w-8 h-8 rounded-full overflow-hidden bg-gradient-to-tr from-cyan-500 to-blue-500 ring-2 ring-transparent hover:ring-white/50 transition-all">
+           {/* Avatar placeholder */}
+        </button>
+        {/* Mobile menu toggle */}
+        <button
+          className="md:hidden ml-2 h-9 w-9 flex items-center justify-center text-white bg-white/10 rounded-md"
           onClick={() => setIsMobilePanelOpen(!isMobilePanelOpen)}
           aria-label="Open panel"
         >
           <Menu className="h-5 w-5" />
-        </Button>
+        </button>
       </div>
     </header>
   );

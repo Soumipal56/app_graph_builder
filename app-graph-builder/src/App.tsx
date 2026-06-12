@@ -4,7 +4,9 @@ import { TopBar } from '@/components/layout/TopBar';
 import { LeftRail } from '@/components/layout/LeftRail';
 import { RightPanel } from '@/components/layout/RightPanel';
 import { AppCanvas } from '@/components/canvas/AppCanvas';
+import { FloatingAppSelector } from '@/components/layout/FloatingAppSelector';
 import { useAppStore } from '@/store/useAppStore';
+import { ThemeProvider } from '@/context/ThemeContext';
 
 export default function App() {
   const { isMobilePanelOpen, setIsMobilePanelOpen } = useAppStore();
@@ -34,21 +36,22 @@ export default function App() {
   }, [isMobilePanelOpen, setIsMobilePanelOpen]);
 
   return (
-    <div className="h-screen w-screen flex flex-col overflow-hidden bg-background text-foreground">
-      {/*
-        ReactFlowProvider wraps everything so NodeInspector (in RightPanel)
-        can call useReactFlow() / useNodesData() from the same context as AppCanvas.
-      */}
-      <ReactFlowProvider>
-        <TopBar />
-        <div className="flex flex-1 overflow-hidden">
-          <LeftRail />
-          <main className="flex-1 relative overflow-hidden">
-            <AppCanvas />
-          </main>
-          <RightPanel />
-        </div>
-      </ReactFlowProvider>
-    </div>
+    <ThemeProvider>
+      <div className="h-screen w-screen flex flex-col overflow-hidden bg-gray-50 dark:bg-[#111111] text-gray-900 dark:text-white transition-colors duration-200">
+        <ReactFlowProvider>
+          <TopBar />
+          <div className="flex flex-1 overflow-hidden">
+            <LeftRail />
+            <main className="flex-1 relative overflow-hidden">
+              <FloatingAppSelector />
+              <AppCanvas />
+            </main>
+            {/* We will hide RightPanel in desktop as requested by moving app selector, 
+                but NodeInspector still needs a place. For now, it will be in the right panel. */}
+            <RightPanel />
+          </div>
+        </ReactFlowProvider>
+      </div>
+    </ThemeProvider>
   );
 }

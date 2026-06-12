@@ -143,7 +143,7 @@ export function AppCanvas() {
         <Background variant={BackgroundVariant.Dots} gap={20} size={1.5} color="hsl(var(--border))" />
         <Controls
           showInteractive={false}
-          className="bg-background border rounded-lg shadow-md overflow-hidden [&>button]:border-0"
+          className="bg-white text-black fill-black border-none rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.3)] overflow-hidden [&>button]:bg-white [&>button]:text-black [&>button]:border-b [&>button]:border-gray-100 last:[&>button]:border-none [&>button:hover]:bg-gray-100 [&>button_svg]:fill-black"
         />
       </ReactFlow>
     </div>
