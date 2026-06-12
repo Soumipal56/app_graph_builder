@@ -1,39 +1,61 @@
 # App Graph Builder
 
-A responsive "App Graph Builder" UI that visualizes service graphs using ReactFlow, TanStack Query, and Zustand.
+A responsive, interactive service architecture graph builder built with React, Vite, and ReactFlow. This project demonstrates complex UI layout composition, mock API integrations, state management, and modern component architecture with a premium dark/light mode aesthetic.
 
-## 🚀 Setup Instructions
+## Features
+
+- **Interactive Canvas**: Drag, drop, select, zoom, pan, and delete nodes using ReactFlow (`@xyflow/react`).
+- **Detailed Node UI**: Custom service nodes displaying real-time metrics (CPU, Memory, Disk) and synced capacity sliders.
+- **Node Inspector**: Slide-out (mobile) or anchored (desktop) right panel that allows editing of node properties, environment configurations, and auto-scaling rules.
+- **Mocked Data Fetching**: Utilizes TanStack Query and Mock Service Worker (MSW) to simulate API latency, data retrieval, and error states.
+- **Global Theme Toggle**: Clean architectural separation using the React Context API to manage light and dark modes.
+- **Responsive Layout**: Desktop-first layout with a collapsing side-drawer for smaller viewports.
+
+---
+
+## Setup Instructions
 
 1. **Install Dependencies**
+   Make sure you are running Node.js (v18+ recommended).
    ```bash
    npm install
    ```
 
-2. **Start the Development Server**
+2. **Run the Development Server**
    ```bash
    npm run dev
    ```
-   *The MSW (Mock Service Worker) is automatically initialized in development mode to intercept API requests.*
 
-3. **Build for Production**
+3. **Check Code Quality (Linting & Types)**
+   ```bash
+   npm run lint
+   npm run typecheck
+   ```
+
+4. **Build for Production**
    ```bash
    npm run build
    ```
 
-## 🏗️ Key Architecture Decisions
+---
 
-- **State Management (Zustand over Context):** Used a centralized Zustand store (`useAppStore`) for cross-component UI state (`selectedAppId`, `selectedNodeId`, `isMobilePanelOpen`). This completely eliminates prop-drilling between the Canvas, TopBar, and RightPanel.
-- **Data Fetching (TanStack Query + MSW):** Handled all server-state natively via TanStack Query (`useApps`, `useGraph`). MSW was used to mock the API endpoints (`/api/apps`) at the network layer, providing realistic simulated latency, error states, and loading skeletons without needing a real backend.
-- **ReactFlow Integration:** Lifted the `<ReactFlowProvider>` to the root `<App />` component. This allows child components (like the `NodeInspector`) to access and update graph data directly using `useReactFlow()` and `useNodesData()`, maintaining predictable and performant graph state outside of the immediate canvas.
-- **Routing:** Avoiding traditional React Router, the app leverages derived state in the main canvas for dynamic data loading, preventing URL-based SPA fallback collisions with the Mock Service Worker routes.
-- **Styling:** Utilized Tailwind CSS v4 paired with `shadcn/ui` components for rapid, consistent, and beautiful UI development.
+## Key Decisions
 
-## ⚠️ Known Limitations
+1. **State Management Separation**: 
+   - **ReactFlow** handles its own internal graph state (`useNodesState`, `useEdgesState`), keeping our global store extremely lean and avoiding unnecessary prop drilling.
+   - **Zustand** is specifically reserved for UI state (`selectedAppId`, `selectedNodeId`, `isMobilePanelOpen`).
+   - **Context API** manages the global `theme` to ensure components remain decoupled from the UI store.
 
-- **Mock Backend Only:** The app uses Mock Service Worker (MSW) to intercept and mock API calls. It does not communicate with a real backend. If you refresh the page heavily, Vite's cache and the MSW registration can sometimes race, requiring a hard refresh (`Ctrl + Shift + R`).
-- **In-Memory Graph State:** Any changes to the graph (node capacity slider, deleting nodes) are only stored in local ReactFlow state and are not persisted across application reloads or switching between apps.
-- **Static Canvas Coordinates:** The mock data provides hardcoded `x`/`y` positions for the nodes rather than implementing an auto-layout algorithm (like Dagre).
-- **Mobile Experience:** While the right panel drawer is fully responsive for mobile views, complex node-dragging and zooming on small touch devices inside ReactFlow can be cramped.
+2. **Mock Service Worker (MSW)**:
+   - Instead of simply wrapping Promises in `setTimeout`, MSW was chosen to provide realistic network interception. This accurately triggers TanStack Query's loading states, refetches, and makes it incredibly easy to swap out the mock layer for a real API later.
+
+3. **Custom Service Node Component**:
+   - The ReactFlow `Node` was entirely custom-built to match a specific premium aesthetic. It heavily leverages Tailwind CSS for complex UI gradients and layout composition directly inside the canvas graph.
 
 ---
-*Built with React, Vite, TypeScript, ReactFlow, shadcn/ui, TanStack Query, and Zustand.*
+
+## Known Limitations
+
+- **Mock Data Persistence**: Because the mock data is hardcoded in the MSW interceptors and the app is heavily client-side, hard-refreshing the browser will reset the node positions and states to their initial mock payload.
+- **No Edge Routing Logic**: Edges are currently simple Bezier curves. If many nodes are added, edges might overlap and become visually cluttered.
+- **Save Functionality**: Changes made in the Node Inspector (like Capacity changes) update the local ReactFlow state in real-time, but there is no `POST` or `PUT` mock endpoint currently wired up to definitively "save" the graph architecture back to the server.
