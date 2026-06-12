@@ -75,6 +75,37 @@ export function NodeInspector() {
               onChange={(val) => handleUpdate({ capacity: val })}
             />
           </div>
+
+          <div className="pt-2 space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-gray-600 dark:text-gray-400">Environment</label>
+                <select className="w-full bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/10 rounded-md p-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-white/30">
+                  <option>Production</option>
+                  <option>Staging</option>
+                  <option>Development</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-gray-600 dark:text-gray-400">Region</label>
+                <select className="w-full bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/10 rounded-md p-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-white/30">
+                  <option>us-east-1</option>
+                  <option>eu-west-1</option>
+                  <option>ap-south-1</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between p-3 border border-gray-200 dark:border-white/10 rounded-lg bg-gray-50 dark:bg-white/5">
+              <div className="space-y-0.5">
+                <label className="text-sm font-medium text-gray-900 dark:text-white">Auto-Scaling</label>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Automatically adjust capacity</p>
+              </div>
+              <button className="w-9 h-5 bg-blue-600 rounded-full relative transition-colors shadow-inner">
+                <div className="absolute right-1 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm"></div>
+              </button>
+            </div>
+          </div>
         </TabsContent>
 
         <TabsContent value="runtime" className="mt-4">
